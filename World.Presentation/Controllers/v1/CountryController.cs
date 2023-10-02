@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -15,9 +16,11 @@ namespace World.Presentation.Controllers.v1
     public class CountryController : APIControllerV1Base
     {
         private readonly ICountryService _countryService;
-        public CountryController(ICountryService countryService) : base(lists: countryService)
+        private readonly ILogger<CountryController> _logger;
+        public CountryController(ICountryService countryService, ILogger<CountryController> logger) : base(lists: countryService)
         {
             _countryService = countryService;
+            _logger = logger;
         }
 
         [HttpGet, Route("get")]

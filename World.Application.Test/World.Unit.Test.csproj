@@ -30,7 +30,8 @@
   <ItemGroup>
     <Folder Include="core\ApplicationTest\CountryTest\ServiceTest\" />
     <Folder Include="core\ApplicationTest\CountryTest\QueryTest\" />
-    <Folder Include="external\" />
+    <Folder Include="external\InfrastructureTest\" />
+    <Folder Include="external\PersistenceTest\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,12 @@ namespace World.Presentation.Controllers.v2
     public class CountryController : APIControllerV2Base
     {
         private readonly ISender _sender;
+        private readonly ILogger<CountryController> _logger;
 
-        public CountryController(ISender sender)
+        public CountryController(ISender sender, ILogger<CountryController> logger)
         {
             this._sender = sender;
+            _logger = logger;
         }
 
         [HttpPost, Route("add")]

@@ -7,6 +7,7 @@ using World.Application.Country.Command;
 using World.Application.ResponseDTO.Country;
 using World.Domain.Contract;
 using World.Domain.Shared;
+using World.Unit.Test.Dummy;
 using World.Unit.Test.Stubs;
 using Xunit.Abstractions;
 using DomainEnt = World.Domain.DomainEntity.World;
@@ -59,26 +60,9 @@ public class CreateCountryCommandHandlerTest
     public async Task Create_country_command_success_test()
     {
         // arrange
-        CreateCountryCommand request = new(HeadOfState: "sample head of state",
-                                            Capital: 10,
-                                            SurfaceArea: 123.34m,
-                                            IndepYear: 1993,
-                                            Population: 8982182,
-                                            LifeExpectancy: 78.4m,
-                                            Gnp: 12.3m,
-                                            Gnpold: 3232.2m);
-
-        DomainEnt.Country response = new()
-        {
-            HeadOfState = "sample head of state",
-            Capital = 10,
-            SurfaceArea = 123.34m,
-            IndepYear = 1993,
-            Population = 8982182,
-            LifeExpectancy = 78.4m,
-            Gnp = 12.3m,
-            Gnpold = 3232.2m
-        };
+        CreateCountryCommand request = DummyObject.GetCreateCountryCommandDummy();
+        DomainEnt.Country response = DummyObject.GetCountryDummy(request);
+        
         CancellationToken cancellationToken = new();
         var createCountryCommandHandler = new CreateCountryCommandHandler(
             _countryRepositoryMock.Object,
@@ -93,7 +77,7 @@ public class CreateCountryCommandHandlerTest
 
         _ = _mapperMock.Setup(
              x => x.Map<DomainEnt.Country?, GetCountryResponse?>(It.IsAny<DomainEnt.Country>())
-            ).Returns<DomainEnt.Country?>(GetResponseObjectfromCountry);
+            ).Returns<DomainEnt.Country?>(DummyObject.GetCountryResponseDummy);
 
         _ = _countryRepositoryMock.Setup(
             x => x.AddCountry(It.IsAny<DomainEnt.Country>(), It.IsAny<CancellationToken>())
@@ -113,22 +97,4 @@ public class CreateCountryCommandHandlerTest
         Assert.Equal(result.Value.Gnp, response.Gnp);
         Assert.Equal(result.Value.Gnpold, response.Gnpold);
     }
-
-    private GetCountryResponse? GetResponseObjectfromCountry(DomainEnt.Country? country)
-    {
-        if (country == null)
-            return null;
-        return new GetCountryResponse()
-        {
-            HeadOfState = country.HeadOfState,
-            Capital = country.Capital,
-            SurfaceArea = country.SurfaceArea,
-            IndepYear = country.IndepYear,
-            Population = country.Population,
-            LifeExpectancy = country.LifeExpectancy,
-            Gnp = country.Gnp,
-            Gnpold = country.Gnpold
-        };
-    }
-
 }

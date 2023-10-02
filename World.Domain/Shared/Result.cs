@@ -10,7 +10,7 @@ public class Result
     /// </summary>
     /// <param name="isSuccess">The flag indicating if the result is successful.</param>
     /// <param name="error">The error that occurred.</param>
-    protected internal Result(bool isSuccess, Error error)
+    public Result(bool isSuccess, Error error)
     {
         if (isSuccess && error != Error.None)
         {

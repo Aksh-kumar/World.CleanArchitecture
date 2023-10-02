@@ -15,11 +15,17 @@ namespace World.Application.Mapper
         public ServiceProfile()
         {
             /******************  Response Mappping to Domain Entity *********/
-            CreateMap<GetCountryResponse, DomainEnt.Country>().ReverseMap();
+            _ = CreateMap<GetCountryResponse, DomainEnt.Country>()
+                .ForMember(x => x.Name, m => m.MapFrom(obj => obj.Name.ToString().Trim()))
+                .ReverseMap()
+                .ForMember(x => x.Name, m => m.MapFrom(obj => obj.Name.ToString().Trim()));
             /****************************************************************/
 
             /******************* Command Mapping to Domain Entity ***********/
-            CreateMap<CreateCountryCommand, DomainEnt.Country>().ReverseMap();
+            _ = CreateMap<CreateCountryCommand, DomainEnt.Country>()
+                .ForMember(x => x.Name, m => m.MapFrom(obj => obj.Name.ToString().Trim()))
+                .ReverseMap()
+                .ForMember(x => x.Name, m => m.MapFrom(obj => obj.Name.ToString().Trim()));
             /****************************************************************/
         }
     }

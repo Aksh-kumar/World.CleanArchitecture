@@ -34,17 +34,10 @@ namespace World.Persistence.Repository.Base
         }
         public async Task<TEntity?> Add(TEntity entity, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                await AddAsync(entity);
-                int res = await _unitOfWork.SaveChangesAsync(cancellationToken);
-                return res == 1 ? entity : null;
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                throw;
-            }
-            
+           
+            await AddAsync(entity);
+            int res = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return res == 1 ? entity : null;
         }
         public async Task<TEntity?> Update(TEntity entity, CancellationToken cancellationToken = default)
         {
