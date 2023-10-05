@@ -4,11 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using World.Domain.Contract;
 using World.Domain.Contract.BaseRepository;
-using World.Persistence.Common;
+using World.Domain.Contract.Read;
+using World.Domain.Contract.Write;
+using World.Domain.Shared;
 using World.Persistence.Contracts;
 using World.Persistence.DBContext;
-using World.Persistence.Repository;
 using World.Persistence.Repository.Base;
+using World.Persistence.Repository.Read;
+using World.Persistence.Repository.Write;
 
 namespace World.Persistence;
 // docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=7766844174Aksh@' -p 1433:1433 -v C:/Users/aksh1/Documents/sql_server_2022/data:/var/opt/mssql/data -v C:/Users/aksh1/Documents/sql_server_2022/log:/var/opt/mssql/log -v C:/Users/aksh1/Documents/sql_server_2022/secrets:/var/opt/mssql/secrets --name sql1 --hostname sql1 -d mcr.microsoft.com/mssql/server:2022-latest
@@ -27,21 +30,22 @@ public static class DependencyInjection
         // serviceCollection.AddScoped<DbContext, WorldDBContext>();
         serviceCollection = serviceCollection.AddScoped<Func<DatabaseType, DbContext>>(provider => key =>
         {
-#pragma warning disable CS8604 // Possible null reference argument.
             return key switch
             {
-                DatabaseType.WORLD_DB => new WorldDBContext(provider.
-                GetService<DbContextOptions<WorldDBContext>>()),
+                DatabaseType.WORLD_DB => new WorldDBContext(
+                    provider.
+                     GetService<DbContextOptions<WorldDBContext>>()!
+                ),
 
                 _ => throw new ArgumentOutOfRangeException(nameof(key), key, null)
-#pragma warning restore CS8604 // Possible null reference argument.
+
             };
         });
         /*******************   Register Repository Injection **************************/
 
         serviceCollection.AddScoped<IUnitOfWorkWorldDb, UnitOfWorkWorldDb>();
-        serviceCollection.AddScoped<ICityRepository, CityRepository>();
-        serviceCollection.AddScoped<ICountryRepository, CountryRepository>();
+        serviceCollection.AddScoped<ICountryReadRepository, CountryReadRepository>();
+        serviceCollection.AddScoped<ICountryWriteRepository, CountryWriteRepository>();
 
         /*****************************************************************************/
         return serviceCollection;

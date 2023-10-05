@@ -1,6 +1,9 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using Microsoft.Extensions.Logging;
+using Serilog.Core;
+using Serilog.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +22,14 @@ namespace World.Application.Behaviors
         where TResponse : Result
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
+        private readonly ILogger<ValidationPipelineBehaviors<TRequest, TResponse>> _logger;
 
-        public ValidationPipelineBehaviors(IEnumerable<IValidator<TRequest>> validators)
+        public ValidationPipelineBehaviors(
+            IEnumerable<IValidator<TRequest>> validators,
+            ILogger<ValidationPipelineBehaviors<TRequest, TResponse>> logger
+        )
         {
+            _logger = logger;
             _validators = validators;
         }
 
@@ -30,11 +38,12 @@ namespace World.Application.Behaviors
             RequestHandlerDelegate<TResponse> next,
             CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"checking If any Validation eror is there");
             if (!_validators.Any())
             {
                 return await next();
             }
-
+            _logger.LogInformation($"One or More validation error is found");
             var validationFailure = await Task.WhenAll(_validators
                 .Select(validator => validator.ValidateAsync(request))
             );
@@ -48,8 +57,8 @@ namespace World.Application.Behaviors
                 )
                 .Distinct()
                 .ToList();
-
-            if(errors.Any())
+            _logger.LogInformation($"validation error Error found Throwing exception");
+            if (errors.Any())
             {
                 throw new World.Application.Exception.ValidationException(errors);
             }

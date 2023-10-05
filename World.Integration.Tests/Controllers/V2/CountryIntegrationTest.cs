@@ -14,10 +14,9 @@ using World.Application.Country.Command;
 using World.Application.ResponseDTO.Country;
 using World.Domain.DomainEntity.World;
 using World.Domain.Shared;
-using World.Integration.Tests.Base;
 using World.Integration.Tests.Utility;
 using World.Persistence.DBContext;
-using World.Unit.Test.Dummy;
+using World.Unit.Test.Helper;
 
 namespace World.Integration.Tests.Controllers.V2
 {

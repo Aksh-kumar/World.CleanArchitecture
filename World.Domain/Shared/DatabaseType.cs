@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace World.Persistence.Common
+namespace World.Domain.Shared;
+
+public enum DatabaseType
 {
-    public enum DatabaseType
-    {
-        WORLD_DB
-    }
+    WORLD_DB
 }

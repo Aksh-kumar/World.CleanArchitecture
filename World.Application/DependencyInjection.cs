@@ -32,7 +32,6 @@ public static class DependencyInjection
         /******************************************************************/
 
         serviceCollection.AddScoped(typeof(ILoggingPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
-
         serviceCollection.AddScoped(typeof(IValidationPilelineBehavior<,>), typeof(ValidationPipelineBehaviors<,>));
         
         /***********************  Services Injection ***********************************************/

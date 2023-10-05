@@ -13,22 +13,17 @@ namespace World.Domain.Contract.BaseRepository;
 public interface IUpdateService<TEntity> where TEntity : class
 {
     /// <summary>
-    /// Update Single Entity
+    /// Update record in to entity
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<TEntity?> Update(TEntity entity, CancellationToken cancellationToken = default);
-    /// <summary>
-    /// Update record in to entity
-    /// </summary>
-    /// <param name="entity">Database/DBContext entity</param>
-    /// <returns></returns>
-    Task UpdateAsync(TEntity entity);
+    Task UpdateAsync(TEntity entity, CancellationToken cancellationToken);
     /// <summary>
     /// Upadte Multiple Entity
     /// </summary>
     /// <param name="list"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task UpdateAllAsync(List<TEntity> list);
+    Task UpdateAllAsync(List<TEntity> list, CancellationToken cancellationToken);
 }

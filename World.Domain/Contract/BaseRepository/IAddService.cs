@@ -8,22 +8,17 @@
 public interface IAddService<TEntity> where TEntity : class
 {
     /// <summary>
-    /// Add Single Entity to DB
+    /// Add new record in to entity
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<TEntity?> Add(TEntity entity, CancellationToken cancellationToken = default);
-    /// <summary>
-    /// Add new record in to entity
-    /// </summary>
-    /// <param name="entity">Database/DBContext entity</param>
-    /// <returns></returns>
-    Task AddAsync(TEntity entity);
+    Task AddAsync(TEntity entity, CancellationToken cancellationToken);
     /// <summary>
     /// Add List of records into entity
     /// </summary>
     /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task AddRangeAsync(List<TEntity> entity);
+    Task AddRangeAsync(List<TEntity> entity, CancellationToken cancellationToken);
 }

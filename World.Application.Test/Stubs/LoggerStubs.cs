@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace World.Unit.Test.Stubs;
 
-internal class LoggerStubs<T> : ILogger<T>, IDisposable
+public class LoggerStubs<T> : ILogger<T>, IDisposable
 {
     private readonly ITestOutputHelper _output;
     public LoggerStubs(ITestOutputHelper output)

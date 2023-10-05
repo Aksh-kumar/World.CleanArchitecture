@@ -7,7 +7,7 @@ using World.Application.Country.Command;
 using World.Application.ResponseDTO.Country;
 using World.Domain.DomainEntity.World;
 
-namespace World.Unit.Test.Dummy;
+namespace World.Unit.Test.Helper;
 
 public static class DummyObject
 {
@@ -92,20 +92,37 @@ public static class DummyObject
 
     public static Country GetCountryDummy(
         string countryName = "sample_test",
-        string code = "TST"
+        string code = "TST",
+        int? capital = 10,
+        decimal surfaceArea = 123.34m,
+        short? indepYear = 1993,
+        int population = 8982182,
+        decimal? lifeExpectancy = 78.4m,
+        decimal? gnp = 12.3m,
+        decimal? gnpold = 3232.2m,
+        string code2="TS",
+        string continent="Asia",
+        string governmentForm = "Republic of test",
+        string localName = "local Test",
+        string region = "North East"
     )
     {
         Country country = new();
         country.HeadOfState = "sample head of state";
-        country.Capital = 10;
+        country.Capital = capital;
         country.Name = countryName;
-        country.SurfaceArea = 123.34m;
-        country.IndepYear = 1993;
-        country.Population = 8982182;
-        country.LifeExpectancy = 78.4m;
-        country.Gnp = 12.3m;
-        country.Gnpold = 3232.2m;
+        country.SurfaceArea = surfaceArea;
+        country.IndepYear = indepYear;
+        country.Population = population;
+        country.LifeExpectancy = lifeExpectancy;
+        country.Gnp = gnp;
+        country.Gnpold = gnpold;
         country.Code = code;
+        country.Code2 = code2;
+        country.Continent = continent;
+        country.GovernmentForm = governmentForm;
+        country.LocalName = localName;
+        country.Region = region;
         return country;
     }
 }

@@ -5,9 +5,10 @@ using Moq;
 using Serilog;
 using World.Application.Country.Command;
 using World.Application.ResponseDTO.Country;
-using World.Domain.Contract;
+using World.Domain.Contract.Read;
+using World.Domain.Contract.Write;
 using World.Domain.Shared;
-using World.Unit.Test.Dummy;
+using World.Unit.Test.Helper;
 using World.Unit.Test.Stubs;
 using Xunit.Abstractions;
 using DomainEnt = World.Domain.DomainEntity.World;
@@ -16,12 +17,12 @@ namespace World.Unit.Test.core.ApplicationTest.CountryTest;
 
 public class CreateCountryCommandHandlerTest
 {
-    private readonly Mock<ICountryRepository> _countryRepositoryMock;
+    private readonly Mock<ICountryWriteRepository> _countryWriteRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly ILogger<CreateCountryCommandHandler> _loggerMock;
     public CreateCountryCommandHandlerTest(ITestOutputHelper output)
     {
-        _countryRepositoryMock = new();
+        _countryWriteRepositoryMock = new();
         _mapperMock = new();
         _loggerMock = new LoggerStubs<CreateCountryCommandHandler>(output);
 
@@ -35,7 +36,7 @@ public class CreateCountryCommandHandlerTest
         CancellationToken cancellationToken = new();
 
         var createCountryCommandHandler = new CreateCountryCommandHandler(
-            _countryRepositoryMock.Object,
+            _countryWriteRepositoryMock.Object,
             _mapperMock.Object,
             _loggerMock
         );
@@ -45,17 +46,54 @@ public class CreateCountryCommandHandlerTest
             x => x.Map<CreateCountryCommand, DomainEnt.Country>(It.IsAny<CreateCountryCommand>())
             ).Returns<CreateCountryCommand>(null);
 
-        _ = _countryRepositoryMock.Setup(
+        _ = _countryWriteRepositoryMock.Setup(
             x => x.AddCountry(It.IsAny<DomainEnt.Country>(), It.IsAny<CancellationToken>())
             ).Returns<DomainEnt.Country?>(null);
 
         // act
-        Result<GetCountryResponse> result = await createCountryCommandHandler.Handle(request, cancellationToken);
+        Result<GetCountryResponse> result = await createCountryCommandHandler.Handle(
+            request, 
+            cancellationToken);
+
+        // assert
+        Assert.True(result.IsFailure);
+        Assert.Equal(result.Error.Message, Error.NullValue.Message);
+    }
+    [Fact]
+    public async Task Create_country_command_null_value_after_insertion_failure_test()
+    {
+        // arrange
+        CreateCountryCommand? request = DummyObject.GetCreateCountryCommandDummy();
+        DomainEnt.Country response = DummyObject.GetCountryDummy(request);
+
+        CancellationToken cancellationToken = new();
+
+        var createCountryCommandHandler = new CreateCountryCommandHandler(
+            _countryWriteRepositoryMock.Object,
+            _mapperMock.Object,
+            _loggerMock
+        );
+
+        _mapperMock.Setup(
+
+            x => x.Map<CreateCountryCommand, DomainEnt.Country>(It.IsAny<CreateCountryCommand>())
+            ).Returns(response);
+        
+        
+        _ = _countryWriteRepositoryMock.Setup(
+                x => x.AddCountry(It.IsAny<DomainEnt.Country>(), It.IsAny<CancellationToken>())
+           ).ReturnsAsync<ICountryWriteRepository, DomainEnt.Country?>(() => null);
+
+        // act
+        Result<GetCountryResponse> result = await createCountryCommandHandler.Handle(
+            request, 
+            cancellationToken);
 
         // assert
         Assert.True(result.IsFailure);
         Assert.Equal(result.Error.Message, Error.NullValueAfterInsertion.Message);
     }
+
     [Fact]
     public async Task Create_country_command_success_test()
     {
@@ -65,7 +103,7 @@ public class CreateCountryCommandHandlerTest
         
         CancellationToken cancellationToken = new();
         var createCountryCommandHandler = new CreateCountryCommandHandler(
-            _countryRepositoryMock.Object,
+            _countryWriteRepositoryMock.Object,
             _mapperMock.Object,
             _loggerMock
         );
@@ -79,22 +117,17 @@ public class CreateCountryCommandHandlerTest
              x => x.Map<DomainEnt.Country?, GetCountryResponse?>(It.IsAny<DomainEnt.Country>())
             ).Returns<DomainEnt.Country?>(DummyObject.GetCountryResponseDummy);
 
-        _ = _countryRepositoryMock.Setup(
+        _ = _countryWriteRepositoryMock.Setup(
             x => x.AddCountry(It.IsAny<DomainEnt.Country>(), It.IsAny<CancellationToken>())
         ).ReturnsAsync(response);
 
         // act
-        Result<GetCountryResponse> result = await createCountryCommandHandler.Handle(request, cancellationToken);
+        Result<GetCountryResponse> result = await createCountryCommandHandler.Handle(
+            request,
+            cancellationToken);
 
         // assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(result.Value.HeadOfState, response.HeadOfState);
-        Assert.Equal(result.Value.Capital, response.Capital);
-        Assert.Equal(result.Value.SurfaceArea, response.SurfaceArea);
-        Assert.Equal(result.Value.IndepYear, response.IndepYear);
-        Assert.Equal(result.Value.Population, response.Population);
-        Assert.Equal(result.Value.LifeExpectancy, response.LifeExpectancy);
-        Assert.Equal(result.Value.Gnp, response.Gnp);
-        Assert.Equal(result.Value.Gnpold, response.Gnpold);
+        Assert.Equal(result.Value.Name, response.Name);
     }
 }

@@ -10,7 +10,11 @@ namespace World.Application.Behaviors
     {
         public static string GetAllProperties(this object? obj)
         {
-            obj ??= new();
+            if(obj is null)
+            {
+                return "";
+            }
+            obj = new();
             return string.Join(" ", obj.GetType()
                                         .GetProperties()
                                         .Select(prop => prop.GetValue(obj)));

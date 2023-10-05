@@ -13,17 +13,17 @@ namespace World.Domain.Contract.BaseRepository;
 public interface IDeleteService<TEntity> where TEntity : class
 {
     /// <summary>
-    /// Delete SIngle Entity
+    /// Delete record in to entity
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<TEntity?> Delete(TEntity entity, CancellationToken cancellationToken = default);
+    Task DeleteAsync(TEntity entity, CancellationToken cancellationToken);
     /// <summary>
-    /// Delete record in to entity
+    /// Delete multiple record in to entity
     /// </summary>
-    /// <param name="entity">Database/DBContext entity</param>
+    /// <param name="entityList"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task DeleteAsync(TEntity entity);
-    Task DeleteRangeAsync(List<TEntity> entityList);
+    Task DeleteRangeAsync(List<TEntity> entityList, CancellationToken cancellationToken);
 }

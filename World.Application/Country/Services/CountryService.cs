@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -8,24 +9,36 @@ using System.Threading.Tasks;
 using World.Application.Behaviors;
 using World.Application.Contracts.Services;
 using World.Application.ResponseDTO.Country;
-using World.Domain.Contract;
+using World.Domain.Contract.Read;
 using DomainEnt = World.Domain.DomainEntity.World;
 
 namespace World.Application.Country.Services
 {
     public class CountryService : DisposableBehavior, ICountryService
     {
-        private readonly ICountryRepository _countryRepository;
+        private readonly ICountryReadRepository _countryReadRepository;
+        private readonly ILogger<ICountryService> _logger;
         private readonly IMapper _mapper;
-        public CountryService(ICountryRepository countryRepository, IMapper mapper) : base(countryRepository)
+        public CountryService(
+            ICountryReadRepository countryReadRepository,
+            ILogger<ICountryService> logger,
+            IMapper mapper) : base(countryReadRepository)
         {
-            _countryRepository = countryRepository;
+            _countryReadRepository = countryReadRepository;
+            _logger = logger;
             _mapper = mapper;
         }
         public async Task<GetCountryResponse?> GetCountryByName([NotNull] string name, CancellationToken cancellationToken)
         {
-            DomainEnt.Country? country = await _countryRepository.SelectCountryByName(name, cancellationToken);
-            GetCountryResponse? response = _mapper.Map<GetCountryResponse?>(country);
+            _logger.LogInformation($"Fetching Counrty Entity From Repository");
+            DomainEnt.Country? country = await _countryReadRepository
+                .SelectCountryByName(
+                    name,
+                    cancellationToken
+                );
+            _logger.LogInformation($"Country Returned from repository {country.GetAllProperties()}");
+            GetCountryResponse? response = _mapper.Map<DomainEnt.Country?, GetCountryResponse?>(country);
+            _logger.LogInformation(response.GetAllProperties());
             return response;
         }
     }

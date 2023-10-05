@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace World.Domain.Contract.BaseRepository;
@@ -16,8 +17,8 @@ public interface ISelectService<TEntity> where TEntity : class
     /// <summary>
     /// Get filterd data as per linq expression
     /// </summary>
-    /// <param name="predicate">linq expression</param>
+    /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IList<TEntity>> SelectAsync(Expression<Func<TEntity, bool>> predicate);
-    // Task<IList<TEntity>> SelectAsync();
+    Task<List<TEntity>> SelectAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
 }

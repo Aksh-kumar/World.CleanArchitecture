@@ -6,29 +6,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using World.Application.Contracts.Messaging;
-using World.Domain.Contract;
 using DomainEnt = World.Domain.DomainEntity.World;
 using World.Domain.Shared;
 using World.Application.ResponseDTO.Country;
 using System.Runtime.CompilerServices;
 using World.Application.Behaviors;
 using Microsoft.Extensions.Logging;
+using World.Domain.Contract.Read;
+using World.Domain.Contract.Write;
 
 // [assembly: InternalsVisibleTo("World.Test")]
 namespace World.Application.Country.Command
 {
     internal sealed class CreateCountryCommandHandler : ICommandHandler<CreateCountryCommand, GetCountryResponse>
     {
-        private readonly ICountryRepository _countryRepository;
+        private readonly ICountryWriteRepository _countryWriteRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<CreateCountryCommandHandler> _logger;
 
         public CreateCountryCommandHandler(
-            ICountryRepository countryRepository,
+            ICountryWriteRepository countryWriteRepository,
             IMapper mapper,
             ILogger<CreateCountryCommandHandler> logger)
         {
-            this._countryRepository = countryRepository;
+            this._countryWriteRepository = countryWriteRepository;
             this._mapper = mapper;
             this._logger = logger;
         }
@@ -42,11 +43,17 @@ namespace World.Application.Country.Command
             DomainEnt.Country? country = _mapper.Map<CreateCountryCommand?, DomainEnt.Country?>(request);
             if (country is null)
             {
-                _logger.LogInformation("country object found to be null returning Null value after insertion");
-                return Result.Failure<GetCountryResponse>(Error.NullValueAfterInsertion);
+                _logger.LogError("cannot create country object from CreateCountryCommand Object");
+                return Result.Failure<GetCountryResponse>(Error.NullValue);
             }
             _logger.LogInformation("Adding country to Database {allProperty}", country.GetAllProperties());
-            country = await _countryRepository.AddCountry(country, cancellationToken);
+            country = await _countryWriteRepository.AddCountry(country, cancellationToken);
+            if(country is null)
+            {
+                _logger.LogError("getting null value after insertion into database");
+                return Result.Failure<GetCountryResponse>(Error.NullValueAfterInsertion);
+            }
+            _logger.LogError("successfully inserted country into databse");
             return Result.Success(_mapper.Map<DomainEnt.Country?, GetCountryResponse>(country));
         }
     }

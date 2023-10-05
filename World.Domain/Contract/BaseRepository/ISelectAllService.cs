@@ -12,9 +12,9 @@ namespace World.Domain.Contract.BaseRepository;
 public interface ISelectAllService<TEntity> where TEntity : class
 {
     /// <summary>
-    /// Get filterd data as per linq expression
+    ///  Get filterd data as per linq expression
     /// </summary>
-    /// <param name="predicate">linq expression</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IEnumerable<TEntity>> SelectAllAsync();
+    Task<List<TEntity>> SelectAllAsync(CancellationToken cancellationToken);
 }

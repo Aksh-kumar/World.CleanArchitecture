@@ -25,5 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\World.Domain\World.Domain.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <InternalsVisibleTo Include="World.Unit.Test" />
+  </ItemGroup>
 </Project>
